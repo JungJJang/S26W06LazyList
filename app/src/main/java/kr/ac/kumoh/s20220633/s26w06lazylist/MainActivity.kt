@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s20220633.s26w06lazylist
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,12 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,18 +58,38 @@ fun MainScreen(
     }
 }
 @Composable
-fun MyList(modifier: Modifier = Modifier,
-           songs: List<Song>,
-           ) {
+fun MyList(
+    modifier: Modifier = Modifier,
+    songs: List<Song>,
+) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    if (isPortrait) {
         LazyColumn(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
-            items(songs) {
-                SongItem(it)
+            items(songs) { song ->
+                SongItem(song)
             }
         }
+
+    }
+    else {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(songs) { song ->
+                SongItem(song)
+            }
+        }
+    }
 }
 
 @Composable
